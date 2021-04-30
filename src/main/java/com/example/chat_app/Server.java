@@ -68,6 +68,10 @@ public class Server {
         public String getUser() {
             return user;
         }
+        public void saveInDB(String chatUser, String msg) throws SQLException {
+            String msg_id=chatUser+"_"+System.currentTimeMillis();
+            DbOperations.chatBackUp(user,msg_id,msg);
+        }
 
         @Override
         public void run() {
@@ -75,18 +79,18 @@ public class Server {
             try {
                 while (true) {
                     line = input.readLine();
-                    if(line.equals("end")){
+                    if (line.equals("end")) {
                         clients.remove(this);
                         users.remove(user);
+                        break;
+                    }else {
+                        sendToAll(user, line);
+                        saveInDB(user, line);
                     }
-                    else{
-                        sendToAll(user,line);
-                        sendToMe(user,line);
-                    }
-
                 }
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
+            }
+            catch (Exception ex) {
+                System.out.println(ex.getMessage());
             }
         }
     }
