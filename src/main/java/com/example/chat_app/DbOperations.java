@@ -7,10 +7,7 @@
 
 package com.example.chat_app;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 public class DbOperations {
     private static volatile Connection connection;
@@ -21,6 +18,20 @@ public class DbOperations {
             connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/chat_application", "root", "");
         }
         return connection;
+    }
+
+    public static void addUserInDB(String user) throws SQLException {
+        getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO users VALUES(null ,?,?)");
+        preparedStatement.setString(1,user);
+        preparedStatement.setDate(2,new Date(System.currentTimeMillis()));
+        int rows= preparedStatement.executeUpdate();
+        if(rows>0){
+            System.out.println("Successfully inserted");
+        }
+        else{
+            System.out.println("Unable to add user to DB");
+        }
     }
 
     public static void createUsersTable(String users) throws SQLException {
