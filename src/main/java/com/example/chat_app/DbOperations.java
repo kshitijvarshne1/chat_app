@@ -7,6 +7,21 @@
 
 package com.example.chat_app;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
 public class DbOperations {
+    private static volatile Connection connection;
+
+    public static Connection getConnection() throws SQLException {
+
+        if (connection == null) {
+            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/chat_application", "root", "chaman@123");
+        }
+
+        return connection;
+
+    }
 }
 
