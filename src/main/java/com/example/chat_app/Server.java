@@ -27,11 +27,20 @@ public class Server {
         DbOperations.createChatTable("chat_backup");
         while (true){
             Socket client = server.accept();
-
+            MessagingThread thread = new MessagingThread(client);
+            clients.add(thread);
+            thread.start();
         }
     }
     public static void sendToAll(String user , String message){
-
+        for (MessagingThread c : clients) {
+            if(!c.getUser().equals(user)){
+                c.sendMessage(user,message);
+            }
+            else{
+                c.sendToMe(user,message);
+            }
+        }
     }
     static class MessagingThread extends Thread{
         String user="";
@@ -45,6 +54,17 @@ public class Server {
             user=input.readLine();
             users.add(user);
             DbOperations.addUserInDB(user);
+        }
+
+        public void sendMessage(String user, String message) {
+            output.println(user+" : "+message);
+        }
+        public void sendToMe(String user, String message) {
+            output.println("You: "+message);
+        }
+
+        public String getUser() {
+            return user;
         }
     }
 }
